@@ -1,0 +1,8 @@
+PROFILES=(bk-eu-west bk-us-west bk-us-east bk-ap-southeast)
+
+DOMAIN="nimblex.local"
+ZoneDir=/var/named/data/
+
+STATIC="
+salt    CNAME   nboffice
+"

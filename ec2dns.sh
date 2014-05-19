@@ -68,7 +68,7 @@ for PROFILE in ${PROFILES[*]}; do
 done
 
 createClean() {
-service named stop
+/sbin/service named stop
 
 rm -f $ZoneDir/${DOMAIN}*
 
@@ -89,19 +89,19 @@ nboffice                A       `curl http://169.254.169.254/latest/meta-data/lo
 
 echo $STATIC >> $ZoneDir/$DOMAIN
 
-named-checkzone $DOMAIN $ZoneDir/$DOMAIN
+/usr/sbin/named-checkzone $DOMAIN $ZoneDir/$DOMAIN
 if [[ $? != 0 ]]; then
     Warning Zone $DOMAIN failed checks. BIND will not start!
     exit 1
 fi
 
-service named start
+/sbin/service named start
 
 }
 
 createCMD() {
   while read line; do
-      echo $line | awk -v domain=$DOMAIN '{print "update add "$6$7"."domain" 300 A " $2}' 
+      echo $line | awk -v domain=$DOMAIN '{print "update add "$6$7$8"."domain" 300 A " $2}' 
   done < /tmp/describe_instances
   echo send
 }
@@ -112,4 +112,4 @@ createClean
 # stopping the server all the time and installing a clean zone. We are keeping
 # this in order to keep it as the only option in the future.
 
-createCMD | nsupdate -k /etc/named/nsupdate.key
+createCMD | /usr/bin/nsupdate -k /etc/named/nsupdate.key

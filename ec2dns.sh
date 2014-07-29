@@ -64,7 +64,7 @@ fi
 rm -r /tmp/describe_instances
 
 for PROFILE in ${PROFILES[*]}; do
-  aws ec2 describe-instances --profile=$PROFILE --query 'Reservations[*].Instances[*].[InstanceId,PrivateIpAddress,PrivateDnsName,PublicIpAddress,PublicDnsName,Tags[0].Value]' --output=text | grep -vw "None" >> /tmp/describe_instances
+  aws ec2 describe-instances --profile=$PROFILE --filters "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].[InstanceId,PrivateIpAddress,PrivateDnsName,PublicIpAddress,PublicDnsName,Tags[?Key==`Name`] | [0].Value]' --output=text | grep -vw "None" >> /tmp/describe_instances
 done
 
 createClean() {

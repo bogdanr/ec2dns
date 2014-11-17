@@ -7,9 +7,9 @@
 # Settings
 #
 # We need to define profiles and the ZONEID 
-PROFILES=(bk-eu-west bk-us-west bk-us-east bk-ap-southeast)
-ZONEID=ZNRVV81EPRU2
-DOMAIN=netop.local.
+PROFILES=(default)
+ZONEID=Z2X9ZZGTU2XKKP
+DOMAIN=aol.
 
 # Check if we have jq
 which jq >/dev/null
@@ -54,7 +54,7 @@ LastChange="Changes done on `date`"
         JSON=$JSON"    { \"Action\": \"CREATE\", \"ResourceRecordSet\": { \"Name\": \""${RRSet}"\", \"Type\": \"A\", \"TTL\": 600, \"ResourceRecords\": [ { \"Value\": \""${InternalIP}"\" } ] } },
 "
     fi
-  done < <(aws ec2 describe-instances --profile=$1 --filters "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].[PrivateIpAddress,Tags[?Key==`Name`] | [0].Value]' | jq '.[]' -c)
+  done < <(aws ec2 describe-instances --profile=$1 --filters "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].[PrivateIpAddress,Tags[?Key==`Name`] | [0].Value]' | jq '.[]|.[]' -c)
 
   if grep -q "lastchange" /tmp/route53entries; then
     JSONl="    { \"Action\": \"UPSERT\", \"ResourceRecordSet\": { \"Name\": \"lastchange.$DOMAIN\", \"Type\": \"TXT\", \"TTL\": 600, \"ResourceRecords\": [ { \"Value\": \"\\\"${LastChange}\\\"\" } ] } }"
